@@ -31,16 +31,37 @@ WordDatabase::WordDatabase()
     }
 }
 
-int WordDatabase::numberOfWords()
+int WordDatabase::numberOfWords() const
 {
     return m_wordList.length();
 }
 
-QString WordDatabase::getWord(int index, WordType type)
+QString WordDatabase::getWord(int index, WordType type) const
 {
     RowItem fetchedItem = m_wordList[index];
     if (type == LocalWord)
         return fetchedItem.first;
     else
         return fetchedItem.second;
+}
+
+void WordDatabase::setWord(int index, WordType type, QString text)
+{
+    if (m_wordList.length() > index) {
+        RowItem fetchedItem = m_wordList[index];
+        if (type == LocalWord)
+            fetchedItem.first = text;
+        else
+            fetchedItem.second = text;
+        m_wordList[index] = fetchedItem;
+        emit itemModified(index);
+    } else {
+        RowItem newItem;
+        if (type == LocalWord)
+            newItem.first = text;
+        else
+            newItem.second = text;
+        m_wordList.append(newItem);
+        emit itemAdded(m_wordList.length()-1);
+    }
 }

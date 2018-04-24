@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    worddatabase.cpp
+    worddatabase.cpp \
+    wordpairmodel.cpp
 
 HEADERS += \
         mainwindow.h \
-    worddatabase.h
+    worddatabase.h \
+    wordpairmodel.h
 
 FORMS += \
         mainwindow.ui

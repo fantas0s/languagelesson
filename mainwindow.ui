@@ -14,13 +14,13 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTableView" name="tableView">
+   <widget class="QListView" name="listView">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
       <width>621</width>
-      <height>291</height>
+      <height>281</height>
      </rect>
     </property>
     <property name="palette">
@@ -29,9 +29,9 @@
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>243</red>
-          <green>243</green>
-          <blue>243</blue>
+          <red>240</red>
+          <green>240</green>
+          <blue>240</blue>
          </color>
         </brush>
        </colorrole>
@@ -40,9 +40,9 @@
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>243</red>
-          <green>243</green>
-          <blue>243</blue>
+          <red>240</red>
+          <green>240</green>
+          <blue>240</blue>
          </color>
         </brush>
        </colorrole>
@@ -51,14 +51,17 @@
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>239</red>
-          <green>239</green>
-          <blue>239</blue>
+          <red>240</red>
+          <green>240</green>
+          <blue>240</blue>
          </color>
         </brush>
        </colorrole>
       </disabled>
      </palette>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAsNeeded</enum>
     </property>
     <property name="horizontalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -71,7 +74,7 @@
      <x>0</x>
      <y>0</y>
      <width>640</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>

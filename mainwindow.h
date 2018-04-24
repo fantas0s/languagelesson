@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "wordpairmodel.h"
 
 namespace Ui {
 class MainWindow;
@@ -16,6 +17,7 @@ public:
     ~MainWindow();
 
 private:
+    WordPairModel* m_model;
     Ui::MainWindow *ui;
 };
 
