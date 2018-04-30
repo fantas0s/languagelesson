@@ -1,5 +1,6 @@
 #include <wordpairmodel.h>
 #include <QVariant>
+#include <QtMath>
 
 WordPairModel::WordPairModel(QObject *parent) :
     QAbstractListModel(parent)
@@ -18,24 +19,25 @@ QHash<int, QByteArray> WordPairModel::roleNames() const {
 int WordPairModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return m_database.numberOfWords();
+    return qMax(m_database.numberOfWords()+1, 10);
 }
 
 QVariant WordPairModel::data(const QModelIndex &index, int role) const
 {
-    if ((index.row() < m_database.numberOfWords()) &&
-        (index.column() < 1)) {
-        if (LocalTextRole == role)
-            return QVariant::fromValue(m_database.getWord(index.row(), WordDatabase::LocalWord));
-        else if (ForeignTextRole == role)
-            return QVariant::fromValue(m_database.getWord(index.row(), WordDatabase::ForeignWord));
-        else if (Qt::DisplayRole == role)
-            return QVariant::fromValue(m_database.getWord(index.row(), WordDatabase::LocalWord));
-        else
-            return QVariant();
-    } else {
-        return QVariant();
+    if (index.column() < 1) {
+        if (index.row() < m_database.numberOfWords()) {
+            if (LocalTextRole == role)
+                return QVariant::fromValue(m_database.getWord(index.row(), WordDatabase::LocalWord));
+            else if (ForeignTextRole == role)
+                return QVariant::fromValue(m_database.getWord(index.row(), WordDatabase::ForeignWord));
+        } else {
+            if (LocalTextRole == role)
+                return QVariant::fromValue(QString("Suomalainen sana..."));
+            else if (ForeignTextRole == role)
+                return QVariant::fromValue(QString("Vieraskielinen sana"));
+        }
     }
+    return QVariant();
 }
 
 bool WordPairModel::setData(const QModelIndex &index, const QVariant &value, int role)

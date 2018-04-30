@@ -20,6 +20,7 @@ private slots:
     void databaseItemModified(int modifiedIndex);
     void databaseItemAdded(int newIndex);
 private:
+    Q_OBJECT
     WordDatabase m_database;
 };
 #endif // WORDPAIRMODEL_H
