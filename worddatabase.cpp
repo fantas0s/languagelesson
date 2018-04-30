@@ -1,6 +1,8 @@
 #include "worddatabase.h"
 #include <QStringList>
 
+WordDatabase* WordDatabase::m_instance = Q_NULLPTR;
+
 QStringList localWords = {"Auto",
                           "Pallo",
                           "Puu",
@@ -23,12 +25,22 @@ QStringList foreignWords = {"Car",
                             "Great",
                             "I wonder if I should run around aimlessly?"};
 
-WordDatabase::WordDatabase()
+WordDatabase::WordDatabase(QObject *parent) :
+    QObject(parent)
 {
     for (int idx=0 ; idx < foreignWords.length() ; ++idx) {
         RowItem newRow(localWords[idx], foreignWords[idx]);
         m_wordList.append(newRow);
     }
+}
+
+QObject* WordDatabase::getDatabaseInstance(QQmlEngine* engine, QJSEngine* scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+    if (!m_instance)
+        m_instance = new WordDatabase();
+    return m_instance;
 }
 
 int WordDatabase::numberOfWords() const
@@ -53,8 +65,13 @@ void WordDatabase::setWord(int index, WordType type, QString text)
             fetchedItem.first = text;
         else
             fetchedItem.second = text;
-        m_wordList[index] = fetchedItem;
-        emit itemModified(index);
+        if (fetchedItem.first.length() || fetchedItem.second.length()) {
+            m_wordList[index] = fetchedItem;
+            emit itemModified(index);
+        } else {
+            m_wordList.remove(index);
+            emit itemRemoved(index);
+        }
     } else {
         RowItem newItem;
         if (type == LocalWord)

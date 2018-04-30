@@ -2,11 +2,16 @@
 #include <QVariant>
 #include <QtMath>
 
+#define NUMBER_OF_WORDS_ALWAYS_IN_LIST  10
+
 WordPairModel::WordPairModel(QObject *parent) :
     QAbstractListModel(parent)
 {
-    connect(&m_database, SIGNAL(itemAdded(int)), this, SLOT(databaseItemAdded(int)));
-    connect(&m_database, SIGNAL(itemModified(int)), this, SLOT(databaseItemModified(int)));
+    m_database = qobject_cast<WordDatabase*>(WordDatabase::getDatabaseInstance(Q_NULLPTR, Q_NULLPTR));
+    Q_ASSERT(m_database);
+    connect(m_database, SIGNAL(itemAdded(int)), this, SLOT(databaseItemAdded(int)));
+    connect(m_database, SIGNAL(itemModified(int)), this, SLOT(databaseItemModified(int)));
+    connect(m_database, SIGNAL(itemRemoved(int)), this, SLOT(databaseItemRemoved(int)));
 }
 
 QHash<int, QByteArray> WordPairModel::roleNames() const {
@@ -19,38 +24,25 @@ QHash<int, QByteArray> WordPairModel::roleNames() const {
 int WordPairModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return qMax(m_database.numberOfWords()+1, 10);
+    return qMax(m_database->numberOfWords()+1, NUMBER_OF_WORDS_ALWAYS_IN_LIST);
 }
 
 QVariant WordPairModel::data(const QModelIndex &index, int role) const
 {
     if (index.column() < 1) {
-        if (index.row() < m_database.numberOfWords()) {
+        if (index.row() < m_database->numberOfWords()) {
             if (LocalTextRole == role)
-                return QVariant::fromValue(m_database.getWord(index.row(), WordDatabase::LocalWord));
+                return QVariant::fromValue(m_database->getWord(index.row(), WordDatabase::LocalWord));
             else if (ForeignTextRole == role)
-                return QVariant::fromValue(m_database.getWord(index.row(), WordDatabase::ForeignWord));
+                return QVariant::fromValue(m_database->getWord(index.row(), WordDatabase::ForeignWord));
         } else {
             if (LocalTextRole == role)
                 return QVariant::fromValue(QString("Suomalainen sana..."));
             else if (ForeignTextRole == role)
-                return QVariant::fromValue(QString("Vieraskielinen sana"));
+                return QVariant::fromValue(QString("Vieraskielinen sana..."));
         }
     }
     return QVariant();
-}
-
-bool WordPairModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    if (LocalTextRole == role) {
-        m_database.setWord(index.row(), WordDatabase::LocalWord, value.toString());
-        return true;
-    } else if (ForeignTextRole == role) {
-        m_database.setWord(index.row(), WordDatabase::ForeignWord, value.toString());
-        return true;
-    } else {
-        return false;
-    }
 }
 
 void WordPairModel::databaseItemModified(int modifiedIndex)
@@ -59,8 +51,26 @@ void WordPairModel::databaseItemModified(int modifiedIndex)
     endMoveRows();
 }
 
+void WordPairModel::databaseItemRemoved(int oldIndex)
+{
+    if (m_database->numberOfWords() <= NUMBER_OF_WORDS_ALWAYS_IN_LIST) {
+        // Deleting might introduce new fake items. Reset to get proper list length.
+        beginResetModel();
+        endResetModel();
+    } else {
+        beginRemoveRows(QModelIndex(), oldIndex, oldIndex);
+        endRemoveRows();
+    }
+}
+
 void WordPairModel::databaseItemAdded(int newIndex)
 {
-    beginInsertRows(QModelIndex(), newIndex, newIndex);
-    endInsertRows();
+    if (m_database->numberOfWords() <= NUMBER_OF_WORDS_ALWAYS_IN_LIST) {
+        // Adding might take place from middle of list. Reset to get proper ordering.
+        beginResetModel();
+        endResetModel();
+    } else {
+        beginInsertRows(QModelIndex(), newIndex, newIndex);
+        endInsertRows();
+    }
 }
