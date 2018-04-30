@@ -8,6 +8,13 @@ WordPairModel::WordPairModel(QObject *parent) :
     connect(&m_database, SIGNAL(itemModified(int)), this, SLOT(databaseItemModified(int)));
 }
 
+QHash<int, QByteArray> WordPairModel::roleNames() const {
+    QHash<int, QByteArray> roles;
+    roles[LocalTextRole] = "localText";
+    roles[ForeignTextRole] = "foreignText";
+    return roles;
+}
+
 int WordPairModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)

@@ -1,11 +1,12 @@
-#include "mainwindow.h"
-#include <QApplication>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include "wordpairmodel.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-
-    return a.exec();
+    QGuiApplication app(argc, argv);
+    QQmlApplicationEngine engine;
+    qmlRegisterType<WordPairModel>("wordpairmodel", 1, 0, "WordPairModel");
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    return app.exec();
 }

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>TwoEditFieldsDelegate.qml</file>
+        <file>WordPairList.qml</file>
+    </qresource>
+</RCC>
