@@ -13,12 +13,13 @@ public:
         LocalWord = 0,
         ForeignWord
     } WordType;
+    Q_ENUM(WordType)
     typedef QPair<QString, QString> RowItem;
 
     static QObject* getDatabaseInstance(QQmlEngine* engine, QJSEngine* scriptEngine);
     int numberOfWords() const;
     QString getWord(int index, WordType type) const;
-    void setWord(int index, WordType type, QString text);
+    Q_INVOKABLE void setWord(int index, WordType type, QString text);
 signals:
     void itemModified(int index);
     void itemAdded(int index);

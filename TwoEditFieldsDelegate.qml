@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
+import worddatabase 1.0
 
 Pane {
     id: delegateRoot
@@ -13,6 +14,9 @@ Pane {
         anchors.leftMargin: 5
         anchors.verticalCenter: parent.verticalCenter
         text: localText
+        onEditingFinished: {
+            WordDatabase.setWord(index, WordDatabase.LocalWord, text);
+        }
     }
     TextField {
         id: foreignWordEdit
@@ -21,5 +25,8 @@ Pane {
         anchors.rightMargin: 5
         anchors.verticalCenter: parent.verticalCenter
         text: foreignText
+        onEditingFinished: {
+            WordDatabase.setWord(index, WordDatabase.ForeignWord, text);
+        }
     }
 }

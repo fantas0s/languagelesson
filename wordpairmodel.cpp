@@ -37,9 +37,9 @@ QVariant WordPairModel::data(const QModelIndex &index, int role) const
                 return QVariant::fromValue(m_database->getWord(index.row(), WordDatabase::ForeignWord));
         } else {
             if (LocalTextRole == role)
-                return QVariant::fromValue(QString("Suomalainen sana..."));
+                return QVariant::fromValue(QString(""));
             else if (ForeignTextRole == role)
-                return QVariant::fromValue(QString("Vieraskielinen sana..."));
+                return QVariant::fromValue(QString(""));
         }
     }
     return QVariant();
@@ -47,8 +47,9 @@ QVariant WordPairModel::data(const QModelIndex &index, int role) const
 
 void WordPairModel::databaseItemModified(int modifiedIndex)
 {
-    beginMoveRows(QModelIndex(), modifiedIndex, modifiedIndex, QModelIndex(), modifiedIndex);
-    endMoveRows();
+    QVector<int> rolesChanged;
+    rolesChanged << LocalTextRole << ForeignTextRole;
+    emit dataChanged(index(modifiedIndex), index(modifiedIndex), rolesChanged);
 }
 
 void WordPairModel::databaseItemRemoved(int oldIndex)
